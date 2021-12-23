@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  maxwell:
+    image: zendesk/maxwell
+    container_name: maxwell
+    command: bin/maxwell --config /etc/maxwell/config.properties
+    volumes: 
+      - ./maxwell:/etc/maxwell/
+    links:
+      - redis
+    depends_on:
+      - redis
+  
+  redis:
+    container_name: redis4maxwell
+    image: redis:4.0.10
+    restart: always
