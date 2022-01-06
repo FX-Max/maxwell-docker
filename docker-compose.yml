@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  mysql:
+    image: mysql:5.7.23
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pwdroot
+      MYSQL_PASSWORD: pwdmysql
+    ports:
+      - 3306:3306
+    restart: always
+    volumes:
+      - "./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./mysql/conf.d:/etc/mysql/conf.d/"
+
   maxwell:
     image: zendesk/maxwell
     container_name: maxwell
@@ -8,11 +21,15 @@ services:
     volumes: 
       - ./maxwell:/etc/maxwell/
     links:
+      - mysql
       - redis
     depends_on:
+      - mysql
       - redis
   
   redis:
     container_name: redis4maxwell
     image: redis:4.0.10
+    ports:
+      - 6379:6379
     restart: always
